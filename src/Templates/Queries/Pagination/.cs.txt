@@ -8,12 +8,12 @@ namespace {namespace};
 
 public class {nameofPlural}WithPaginationQuery : PaginationFilterBase, ICacheableRequest<PaginatedData<{itemname}Dto>>
 {
-    [CompareTo("Name", "Description")] // <-- This filter will be applied to Name or Description.
+    [CompareTo({fieldstring})] 
     [StringFilterOptions(StringFilterOption.Contains)]
     public string? Keyword { get; set; }
     [CompareTo(typeof(Search{nameofPlural}WithListView), "Id")]
-    public {itemname}ListView ListView { get; set; } = {itemname}ListView.All; //<-- When the user selects a different ListView,
-                                                                               // a custom query expression is executed on the filter.
+    public {itemname}ListView ListView { get; set; } = {itemname}ListView.Active; 
+                                                                               
     public override string ToString()
     {
         return $"Listview:{ListView},Search:{Keyword},Sort:{Sort},SortBy:{SortBy},{Page},{PerPage}";
@@ -68,33 +68,20 @@ public class Search{nameofPlural}WithListView : FilteringOptionsBaseAttribute
 {
     public override Expression BuildExpression(Expression expressionBody, PropertyInfo targetProperty, PropertyInfo filterProperty, object value)
     {
-        var today = DateTime.Now.Date;
-        var start = Convert.ToDateTime(today.ToString("yyyy-MM-dd",CultureInfo.CurrentCulture) + " 00:00:00", CultureInfo.CurrentCulture);
-        var end = Convert.ToDateTime(today.ToString("yyyy-MM-dd",CultureInfo.CurrentCulture) + " 23:59:59", CultureInfo.CurrentCulture);
-        var end30 = Convert.ToDateTime(today.AddDays(30).ToString("yyyy-MM-dd", CultureInfo.CurrentCulture) + " 23:59:59", CultureInfo.CurrentCulture);
         var listview = ({itemname}ListView)value;
-        return listview switch {
-            {itemname}ListView.All => expressionBody,
-            {itemname}ListView.CreatedToday => Expression.GreaterThanOrEqual(Expression.Property(expressionBody, "Created"), 
-                                                                          Expression.Constant(start, typeof(DateTime?)))
-                                            .Combine(Expression.LessThanOrEqual(Expression.Property(expressionBody, "Created"), 
-                                                     Expression.Constant(end, typeof(DateTime?))), 
-                                                     CombineType.And),
-            {itemname}ListView.Created30Days => Expression.GreaterThanOrEqual(Expression.Property(expressionBody, "Created"), 
-                                                                          Expression.Constant(start, typeof(DateTime?)))
-                                            .Combine(Expression.LessThanOrEqual(Expression.Property(expressionBody, "Created"), 
-                                                     Expression.Constant(end30, typeof(DateTime?))), 
-                                                     CombineType.And),
-            _=> expressionBody
+        return listview switch
+        {
+            {itemname}ListView.Active => Expression.Equal(Expression.Property(expressionBody, "IsActive"), Expression.Constant(true, typeof(Boolean))),
+
+            {itemname}ListView.Inactive => Expression.Equal(Expression.Property(expressionBody, "IsActive"), Expression.Constant(false, typeof(Boolean))), 
+            _ => expressionBody
         };
     }
 }
 public enum {itemname}ListView
 {
-    [Description("All")]
-    All,
-    [Description("Created Toady")]
-    CreatedToday,
-    [Description("Created within the last 30 days")]
-    Created30Days
+    [Description("Active")]
+    Active,
+    [Description("Inactive")]
+    Inactive,
 }

@@ -147,6 +147,7 @@ namespace CleanArchitecture.CodeGenerator
 				var mudTdHeaderDefinition = createMudTdHeaderDefinition(classObject);
 				var mudFormFieldDefinition = createMudFormFieldDefinition(classObject);
 				var fieldAssignmentDefinition = createFieldAssignmentDefinition(classObject);
+				var fieldString = GetFieldStrings(classObject);
 				return content.Replace("{rootnamespace}", _defaultNamespace)
 					            .Replace("{namespace}", ns)
 							    .Replace("{selectns}", selectNs)
@@ -161,6 +162,7 @@ namespace CleanArchitecture.CodeGenerator
 								.Replace("{mudTdHeaderDefinition}", mudTdHeaderDefinition)
 								.Replace("{mudFormFieldDefinition}", mudFormFieldDefinition)
 								.Replace("{keytype}", primaryKeyType)
+								.Replace("{fieldstring}", fieldString)
 								;
 			}
 		}
@@ -197,6 +199,16 @@ namespace CleanArchitecture.CodeGenerator
 		{
 			IntellisenseProperty primaryKey = classObject.Properties.Where(x => x.Name == PRIMARYKEY).FirstOrDefault();
 			return primaryKey == null ? "string" : primaryKey.Type.CodeName;
+		}
+		private static string GetFieldStrings(IntellisenseObject classObject)
+		{
+			var result = "";
+			classObject.Properties.Where(a => a.Name != PRIMARYKEY && a.Type.CodeName != "bool").ToList().ForEach(x => {
+
+				result += $"\"{x.Name}\", ";
+			});
+			result = result.Remove(result.LastIndexOf(","), 1);
+			return result;
 		}
 		private static string createDtoFieldDefinition(IntellisenseObject classObject)
 		{
