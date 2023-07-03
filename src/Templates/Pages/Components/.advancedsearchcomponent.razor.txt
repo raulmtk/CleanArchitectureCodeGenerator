@@ -1,4 +1,4 @@
-﻿@using CleanArchitecture.Blazor.Application.Features.{nameofPlural}.Queries.Pagination
+﻿@using EvermoonSuite.Application.Features.{nameofPlural}.Queries.Pagination
 @inject IStringLocalizer<{nameofPlural}> L
 
 <MudExpansionPanel @bind-IsExpanded="_advancedSearchExpanded"

@@ -10,10 +10,10 @@ namespace {namespace};
     public class Delete{itemname}Command: FilterBase, ICacheInvalidatorRequest<Result<int>>
     {
       [ArraySearchFilter()]
-      public int[] Id {  get; }
+      public {keytype}[] Id {  get; }
       public string CacheKey => {itemname}CacheKey.GetAllCacheKey;
       public CancellationTokenSource? SharedExpiryTokenSource => {itemname}CacheKey.SharedExpiryTokenSource();
-      public Delete{itemname}Command(int[] id)
+      public Delete{itemname}Command({keytype}[] id)
       {
         Id = id;
       }

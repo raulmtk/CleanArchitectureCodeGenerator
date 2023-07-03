@@ -19,7 +19,7 @@ namespace CleanArchitecture.CodeGenerator
 		private static readonly List<string> _templateFiles = new List<string>();
 		private const string _defaultExt = ".txt";
 		private const string _templateDir = ".templates";
-		private const string _defaultNamespace = "CleanArchitecture.Razor";
+		private const string _defaultNamespace = "EvermoonSuite";
 		static TemplateMap()
 		{
 			var folder = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
@@ -139,6 +139,7 @@ namespace CleanArchitecture.CodeGenerator
 				var content = await reader.ReadToEndAsync();
 				var nameofPlural = ProjectHelpers.Pluralize(name);
 				var dtoFieldDefinition = createDtoFieldDefinition(classObject);
+				var primaryKeyType = GetPrimaryKeyType(classObject);
 				var importFuncExpression = createImportFuncExpression(classObject);
 				var templateFieldDefinition = createTemplateFieldDefinition(classObject);
 				var exportFuncExpression = createExportFuncExpression(classObject);
@@ -159,6 +160,7 @@ namespace CleanArchitecture.CodeGenerator
 								.Replace("{mudTdDefinition}", mudTdDefinition)
 								.Replace("{mudTdHeaderDefinition}", mudTdHeaderDefinition)
 								.Replace("{mudFormFieldDefinition}", mudFormFieldDefinition)
+								.Replace("{keytype}", primaryKeyType)
 								;
 			}
 		}
@@ -191,15 +193,23 @@ namespace CleanArchitecture.CodeGenerator
 			return r.Replace(str, " ");
 		}
 		public const string PRIMARYKEY = "Id";
+		private static string GetPrimaryKeyType(IntellisenseObject classObject)
+		{
+			IntellisenseProperty primaryKey = classObject.Properties.Where(x => x.Name == PRIMARYKEY).FirstOrDefault();
+			return primaryKey == null ? "string" : primaryKey.Type.CodeName;
+		}
 		private static string createDtoFieldDefinition(IntellisenseObject classObject)
 		{
 			var output = new StringBuilder();
-			foreach(var property in classObject.Properties.Where(x => x.Type.IsKnownType == true))
+			foreach(var property in classObject.Properties.Where(x => x.Type.IsKnownType))
 			{
 				output.Append($"    [Description(\"{splitCamelCase(property.Name)}\")]\r\n");
 				if (property.Name == PRIMARYKEY)
 				{
-					output.Append($"    public {property.Type.CodeName} {property.Name} {{get;set;}} \r\n");
+					if (property.Type.CodeName == "string")
+						output.Append($"    public {property.Type.CodeName} {property.Name} {{get;set;}} = String.Empty; \r\n");
+					else
+						output.Append($"    public {property.Type.CodeName} {property.Name} {{get;set;}} \r\n");
 				}
 				else
 				{
@@ -207,7 +217,7 @@ namespace CleanArchitecture.CodeGenerator
 					{
 						case "string" when property.Name.Equals("Name", StringComparison.OrdinalIgnoreCase):
 							output.Append($"    public {property.Type.CodeName} {property.Name} {{get;set;}} = String.Empty; \r\n");
-						    break;
+							break;
 						case "string" when !property.Name.Equals("Name", StringComparison.OrdinalIgnoreCase) && !property.Type.IsArray && !property.Type.IsDictionary:
 							output.Append($"    public {property.Type.CodeName}? {property.Name} {{get;set;}} \r\n");
 							break;
@@ -246,7 +256,7 @@ namespace CleanArchitecture.CodeGenerator
 							}
 							break;
 					}
-					
+
 				}
 			}
 			return output.ToString();
