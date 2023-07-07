@@ -57,7 +57,7 @@ namespace {namespace};
             {
                 foreach (var dto in result.Data)
                 {
-                    var exists = await _context.{nameofPlural}.AnyAsync(x => x.Name == dto.Name, cancellationToken);
+                    var exists = await _context.{nameofPlural}.AnyAsync(x => x.{keyname} == dto.{keyname}, cancellationToken);
                     if (!exists)
                     {
                         var item = _mapper.Map<{itemname}>(dto);

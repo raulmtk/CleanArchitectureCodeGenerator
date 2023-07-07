@@ -11,7 +11,7 @@ public class {nameofPlural}WithPaginationQuery : PaginationFilterBase, ICacheabl
     [CompareTo({fieldstring})] 
     [StringFilterOptions(StringFilterOption.Contains)]
     public string? Keyword { get; set; }
-    [CompareTo(typeof(Search{nameofPlural}WithListView), "Id")]
+    [CompareTo(typeof(Search{nameofPlural}WithListView), "{keyname}")]
     public {itemname}ListView ListView { get; set; } = {itemname}ListView.Active; 
                                                                                
     public override string ToString()

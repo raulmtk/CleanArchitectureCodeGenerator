@@ -244,7 +244,7 @@
         try
         {
             _loading = true;
-            Query.Sort = state.SortDefinitions.FirstOrDefault()?.SortBy ?? "Id";
+            Query.Sort = state.SortDefinitions.FirstOrDefault()?.SortBy ?? "{keyname}";
             Query.SortBy = (state.SortDefinitions.FirstOrDefault()?.Descending ?? true ? AutoFilterer.Enums.Sorting.Descending : AutoFilterer.Enums.Sorting.Ascending);
             Query.Page = state.Page + 1;
             Query.PerPage = state.PageSize;
@@ -332,7 +332,7 @@
 
     private async Task OnDelete({itemname}Dto dto)
     {
-        var command = new Delete{itemname}Command(new {keytype}[] { dto.Id });
+        var command = new Delete{itemname}Command(new {keytype}[] { dto.{keyname} });
         var parameters = new DialogParameters 
            {
              { nameof(DeleteConfirmation.Command),  command },
@@ -350,7 +350,7 @@
 
     private async Task OnDeleteChecked()
     {
-        var command = new Delete{itemname}Command(_selectedItems.Select(x => x.Id).ToArray());
+        var command = new Delete{itemname}Command(_selectedItems.Select(x => x.{keyname}).ToArray());
         var parameters = new DialogParameters
                         {
                              { nameof(DeleteConfirmation.Command),  command },
@@ -373,7 +373,7 @@
             {
                 Keyword = Query.Keyword,
                 ListView = Query.ListView,
-                Sort = _table.SortDefinitions.Values.FirstOrDefault()?.SortBy ?? "Id",
+                Sort = _table.SortDefinitions.Values.FirstOrDefault()?.SortBy ?? "{keyname}",
                 SortBy = (_table.SortDefinitions.Values.FirstOrDefault()?.Descending ?? false) ? AutoFilterer.Enums.Sorting.Ascending : AutoFilterer.Enums.Sorting.Descending
             };
         var result = await Mediator.Send(request);

@@ -140,6 +140,7 @@ namespace CleanArchitecture.CodeGenerator
 				var nameofPlural = ProjectHelpers.Pluralize(name);
 				var dtoFieldDefinition = createDtoFieldDefinition(classObject);
 				var primaryKeyType = GetPrimaryKeyType(classObject);
+				var keyName = GetKeyName(classObject);
 				var importFuncExpression = createImportFuncExpression(classObject);
 				var templateFieldDefinition = createTemplateFieldDefinition(classObject);
 				var exportFuncExpression = createExportFuncExpression(classObject);
@@ -148,6 +149,7 @@ namespace CleanArchitecture.CodeGenerator
 				var mudFormFieldDefinition = createMudFormFieldDefinition(classObject);
 				var fieldAssignmentDefinition = createFieldAssignmentDefinition(classObject);
 				var fieldString = GetFieldStrings(classObject);
+				var keynotemptycondition = GetKeyNotEmptyCondition(classObject);
 				return content.Replace("{rootnamespace}", _defaultNamespace)
 					            .Replace("{namespace}", ns)
 							    .Replace("{selectns}", selectNs)
@@ -163,7 +165,28 @@ namespace CleanArchitecture.CodeGenerator
 								.Replace("{mudFormFieldDefinition}", mudFormFieldDefinition)
 								.Replace("{keytype}", primaryKeyType)
 								.Replace("{fieldstring}", fieldString)
+								.Replace("{keyname}", keyName)
+								.Replace("{keynotemptycondition}", keynotemptycondition)
 								;
+			}
+		}
+
+		private static string GetKeyName(IntellisenseObject classObject)
+		{
+			IntellisenseProperty primaryKey = classObject.Properties.Where(x => x.Name == PRIMARYKEY).FirstOrDefault();
+			return primaryKey == null ? "Code" : primaryKey.Name;
+		}
+
+		private static string GetKeyNotEmptyCondition(IntellisenseObject classObject)
+		{
+			IntellisenseProperty primaryKey = classObject.Properties.Where(x => x.Name == PRIMARYKEY).FirstOrDefault();
+			if (primaryKey == null)
+			{
+				return $"!string.IsNullOrEmpty(request.Code)";
+			}
+			else
+			{
+				return $"request.{primaryKey.Name} > 0";
 			}
 		}
 
@@ -314,24 +337,24 @@ namespace CleanArchitecture.CodeGenerator
 		{
 			var output = new StringBuilder();
 			var defaultfieldName = new string[] { "Name", "Description" };
-			if (classObject.Properties.Where(x => x.Type.IsKnownType == true && defaultfieldName.Contains(x.Name)).Any())
-			{
-				output.Append($"<PropertyColumn Property=\"x => x.Name\" Title=\"@L[_currentDto.GetMemberDescription(x=>x.Name)]\"> \r\n");
-				output.Append("   <CellTemplate>\r\n");
-				output.Append($"      <div class=\"d-flex flex-column\">\r\n");
-				if (classObject.Properties.Where(x => x.Type.IsKnownType == true && x.Name == defaultfieldName.First()).Any())
-				{
-					output.Append($"        <MudText Typo=\"Typo.body2\">@context.Item.Name</MudText>\r\n");
-				}
-				if (classObject.Properties.Where(x => x.Type.IsKnownType == true && x.Name == defaultfieldName.Last()).Any())
-				{
-					output.Append($"        <MudText Typo=\"Typo.body2\">@context.Item.Description</MudText>\r\n");
-				}
-				output.Append($"     </div>\r\n");
-				output.Append("    </CellTemplate>\r\n");
-				output.Append($"</PropertyColumn>\r\n");
-			}
-			foreach (var property in classObject.Properties.Where(x => !defaultfieldName.Contains(x.Name)))
+			//if (classObject.Properties.Where(x => x.Type.IsKnownType == true && defaultfieldName.Contains(x.Name)).Any())
+			//{
+			//	output.Append($"<PropertyColumn Property=\"x => x.Name\" Title=\"@L[_currentDto.GetMemberDescription(x=>x.Name)]\"> \r\n");
+			//	output.Append("   <CellTemplate>\r\n");
+			//	output.Append($"      <div class=\"d-flex flex-column\">\r\n");
+			//	if (classObject.Properties.Where(x => x.Type.IsKnownType == true && x.Name == defaultfieldName.First()).Any())
+			//	{
+			//		output.Append($"        <MudText Typo=\"Typo.body2\">@context.Item.Name</MudText>\r\n");
+			//	}
+			//	if (classObject.Properties.Where(x => x.Type.IsKnownType == true && x.Name == defaultfieldName.Last()).Any())
+			//	{
+			//		output.Append($"        <MudText Typo=\"Typo.body2\">@context.Item.Description</MudText>\r\n");
+			//	}
+			//	output.Append($"     </div>\r\n");
+			//	output.Append("    </CellTemplate>\r\n");
+			//	output.Append($"</PropertyColumn>\r\n");
+			//}
+			foreach (var property in classObject.Properties)
 			{
 				if (property.Name == PRIMARYKEY) continue;
 				output.Append("                ");

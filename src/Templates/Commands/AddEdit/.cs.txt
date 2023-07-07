@@ -40,14 +40,14 @@ public class AddEdit{itemname}Command: ICacheInvalidatorRequest<Result<{keytype}
         {
             // TODO: Implement AddEdit{itemname}CommandHandler method 
             var dto = _mapper.Map<{itemname}Dto>(request);
-            if (request.Id > 0)
+            if ({keynotemptycondition})
             {
-                var item = await _context.{nameofPlural}.FindAsync(new object[] { request.Id }, cancellationToken) ?? throw new NotFoundException($"{itemname} with id: [{request.Id}] not found.");
+                var item = await _context.{nameofPlural}.FindAsync(new object[] { request.{keyname} }, cancellationToken) ?? throw new NotFoundException($"{itemname} with {keyname}: [{request.{keyname}}] not found.");
                 item = _mapper.Map(dto, item);
 				// raise a update domain event
 				item.AddDomainEvent(new {itemname}UpdatedEvent(item));
                 await _context.SaveChangesAsync(cancellationToken);
-                return await Result<{keytype}>.SuccessAsync(item.Id);
+                return await Result<{keytype}>.SuccessAsync(item.{keyname});
             }
             else
             {
@@ -56,7 +56,7 @@ public class AddEdit{itemname}Command: ICacheInvalidatorRequest<Result<{keytype}
 				item.AddDomainEvent(new {itemname}CreatedEvent(item));
                 _context.{nameofPlural}.Add(item);
                 await _context.SaveChangesAsync(cancellationToken);
-                return await Result<{keytype}>.SuccessAsync(item.Id);
+                return await Result<{keytype}>.SuccessAsync(item.{keyname});
             }
            
         }

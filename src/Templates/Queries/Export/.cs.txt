@@ -9,11 +9,11 @@ namespace {namespace};
 
 public class Export{nameofPlural}Query : OrderableFilterBase, IRequest<Result<byte[]>>
 {
-        [CompareTo("Name", "Description")] // <-- This filter will be applied to Name or Description.
+        [CompareTo({fieldstring})] 
         [StringFilterOptions(StringFilterOption.Contains)]
         public string? Keyword { get; set; }
-        [CompareTo(typeof(Search{nameofPlural}WithListView), "Id")]
-        public {itemname}ListView ListView { get; set; } = {itemname}ListView.All;
+        [CompareTo(typeof(Search{nameofPlural}WithListView), "{keyname}")]
+        public {itemname}ListView ListView { get; set; } = {itemname}ListView.Active;
 }
     
 public class Export{nameofPlural}QueryHandler :
