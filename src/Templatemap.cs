@@ -38,23 +38,12 @@ namespace CleanArchitecture.CodeGenerator
 
 		public static async Task<string> GetTemplateFilePathAsync(Project project, IntellisenseObject classObject, string file,string itemname,string selectFolder)
 		{
-			var templatefolders =new string[]{
-				"Commands\\AcceptChanges",
-				"Commands\\Create",
-				"Commands\\Delete",
-				"Commands\\Update",
-				"Commands\\AddEdit",
-				"Commands\\Import",
-				"DTOs",
-				"Caching",
+			var templatefolders =new string[]{				
+				"DTOs",				
 				"EventHandlers",
-				"Events",
-				"Queries\\Export",
-				"Queries\\GetAll",
-				"Queries\\GetById",
-				"Queries\\Pagination",
+				"Service",
+				"Events",				
 				"Pages",
-				"Pages\\Components",
 				"Persistence\\Configurations",
 				};
 			var extension = Path.GetExtension(file).ToLowerInvariant();
@@ -138,6 +127,7 @@ namespace CleanArchitecture.CodeGenerator
 			{
 				var content = await reader.ReadToEndAsync();
 				var nameofPlural = ProjectHelpers.Pluralize(name);
+				var nameofPluralLower = ProjectHelpers.Pluralize(name).ToLowerInvariant();
 				var dtoFieldDefinition = createDtoFieldDefinition(classObject);
 				var primaryKeyType = GetPrimaryKeyType(classObject);
 				var keyName = GetKeyName(classObject);
@@ -167,7 +157,7 @@ namespace CleanArchitecture.CodeGenerator
 								.Replace("{fieldstring}", fieldString)
 								.Replace("{keyname}", keyName)
 								.Replace("{keynotemptycondition}", keynotemptycondition)
-								;
+								.Replace("{nameofPluralLowerCase}", nameofPluralLower);
 			}
 		}
 
@@ -238,7 +228,7 @@ namespace CleanArchitecture.CodeGenerator
 			var output = new StringBuilder();
 			foreach(var property in classObject.Properties.Where(x => x.Type.IsKnownType))
 			{
-				output.Append($"    [Description(\"{splitCamelCase(property.Name)}\")]\r\n");
+				output.Append($"    [Description(\"{property.Name}\")]\r\n");
 				if (property.Name == PRIMARYKEY)
 				{
 					if (property.Type.CodeName == "string")

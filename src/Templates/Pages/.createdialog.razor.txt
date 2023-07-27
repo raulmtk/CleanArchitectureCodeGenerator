@@ -1,5 +1,4 @@
-﻿@using EvermoonSuite.Application.Features.{nameofPlural}.Commands.AddEdit
-
+﻿
 @inherits MudComponentBase
 @inject IStringLocalizer<{nameofPlural}> L
 

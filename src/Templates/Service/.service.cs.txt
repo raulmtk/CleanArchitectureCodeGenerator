@@ -1,0 +1,96 @@
+﻿using EvermoonSuite.Application.Common.Queries;
+using EvermoonSuite.Application.Features.{nameofPlural}.DTOs;
+
+namespace {namespace};
+
+public interface I{itemname}Service
+{
+	Task<PaginatedData<{itemname}Dto> Get{nameofPlural}WithPagination(EntityDataQuery<{itemname}> query);
+}
+
+public class {itemname}Service : I{itemname}Service
+{
+	public readonly IApplicationDbContext _context;
+    public readonly IMapper _mapper;
+    public readonly ILogger<{itemname}Service> _logger;
+
+    public VendorService(IApplicationDbContext context, IMapper mapper, ILogger<{itemname}Service> logger)
+    {
+        _context = context;
+        _mapper = mapper;
+        _logger = logger;
+    }
+
+    public async Task<PaginatedData<{itemname}Dto> Get{nameofPlural}WithPagination(EntityDataQuery<{itemname}> query)
+    {
+        try
+        {
+            IQueryable<{itemname}> data = from item in _context.{nameofPlural} orderby item.{keyname} select item;
+            if (!query.ShowInactives)
+                data = data.Where(x => x.IsActive);
+
+            if (query.Filters != null)
+                data = data.Where(query.Filters);
+
+            var result = await data.AsNoTracking().ProjectTo<{itemname}Dto>(_mapper.ConfigurationProvider).PaginatedDataAsync(query.PageNumber, query.PageSize);
+            
+            return result;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex.Message, ex);
+            throw;
+        }
+    }
+
+    public async Task<Result<{keytype}>> Create({itemname}Dto dto, CancellationToken cancellationToken)
+    {
+        try
+        {            
+            var item = _mapper.Map<{itemname}>(dto);
+            item.AddDomainEvent(new {itemname}CreatedEvent(item));
+            _context.{nameofPlural}.Add(item);
+            await _context.SaveChangesAsync(cancellationToken);
+            return await Result<{keytype}>.SuccessAsync(item.{keyname});
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex.Message, ex);
+            throw;
+        }
+    }
+
+    public async Task<Result<{keytype}>> Update({itemname}Dto dto, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var item = await _context.{nameofPlural}.FindAsync( new object[] { dto.{keyName} }, cancellationToken) ?? throw new NotFoundException($"{itemname} with {keyname}: [{dto.{keyname}}] not found.");
+            item = _mapper.Map(dto, item);
+            item.AddDomainEvent(new {itemname}UpdatedEvent(item));
+            await _context.SaveChangesAsync(cancellationToken);
+            return await Result<{keytype}>.SuccessAsync(item.{keyname});
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex.Message, ex);
+            throw;
+        }
+    }
+
+    public async Task<Result<{keytype}>> ChangeActiveStatus({itemname}Dto dto, bool active, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var item = await _context.{nameofPlural}.FindAsync( new object[] { dto.{keyName} }, cancellationToken) ?? throw new NotFoundException($"{itemname} with {keyname}: [{dto.{keyname}}] not found.");
+            item.IsActive = active;
+            item.AddDomainEvent(new {itemname}UpdatedEvent(item));
+            await _context.SaveChangesAsync(cancellationToken);
+            return await Result<{keytype}>.SuccessAsync(item.{keyname});
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex.Message, ex);
+            throw;
+        }
+    }
+}

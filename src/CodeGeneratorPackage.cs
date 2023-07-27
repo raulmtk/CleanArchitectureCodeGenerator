@@ -105,25 +105,12 @@ namespace CleanArchitecture.CodeGenerator
 
 					var list = new List<string>()
 					{
-						$"{nameofPlural}/Commands/AddEdit/AddEdit{name}Command.cs",
-						$"{nameofPlural}/Commands/AddEdit/AddEdit{name}CommandValidator.cs",
-						$"{nameofPlural}/Commands/Create/Create{name}Command.cs",
-						$"{nameofPlural}/Commands/Create/Create{name}CommandValidator.cs",
-						$"{nameofPlural}/Commands/Delete/Delete{name}Command.cs",
-						$"{nameofPlural}/Commands/Delete/Delete{name}CommandValidator.cs",
-						$"{nameofPlural}/Commands/Update/Update{name}Command.cs",
-						$"{nameofPlural}/Commands/Update/Update{name}CommandValidator.cs",
-						$"{nameofPlural}/Commands/Import/Import{nameofPlural}Command.cs",
-						$"{nameofPlural}/Commands/Import/Import{nameofPlural}CommandValidator.cs",
-						$"{nameofPlural}/Caching/{name}CacheKey.cs",
+						
 						$"{nameofPlural}/DTOs/{name}Dto.cs",
 						$"{nameofPlural}/EventHandlers/{name}CreatedEventHandler.cs",
 						$"{nameofPlural}/EventHandlers/{name}UpdatedEventHandler.cs",
 						$"{nameofPlural}/EventHandlers/{name}DeletedEventHandler.cs",
-						$"{nameofPlural}/Queries/Export/Export{nameofPlural}Query.cs",
-						$"{nameofPlural}/Queries/GetAll/GetAll{nameofPlural}Query.cs",
-						$"{nameofPlural}/Queries/GetById/Get{name}ByIdQuery.cs",
-						$"{nameofPlural}/Queries/Pagination/{nameofPlural}PaginationQuery.cs",
+						$"{nameofPlural}/Service/{name}Service.cs"
 					};
 					foreach (var item in list)
 					{
@@ -133,8 +120,7 @@ namespace CleanArchitecture.CodeGenerator
 					var pages = new List<string>()
 					{
 						$"Pages/{nameofPlural}/{nameofPlural}.razor",
-						$"Pages/{nameofPlural}/_{name}FormDialog.razor",
-						$"Pages/{nameofPlural}/Components/{nameofPlural}AdvancedSearchComponent.razor"
+						$"Pages/{nameofPlural}/_{name}CreateDialog.razor",
 					};
 					foreach (var item in pages)
 					{

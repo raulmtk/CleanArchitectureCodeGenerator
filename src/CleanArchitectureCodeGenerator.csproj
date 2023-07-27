@@ -111,9 +111,6 @@
       <DependentUpon>source.extension.vsixmanifest</DependentUpon>
     </Compile>
     <Compile Include="TemplateMap.cs" />
-    <Content Include="Templates\Caching\.cachekey.cs.txt">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
     <Content Include="Templates\Events\.deletedevent.cs.txt">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
@@ -132,61 +129,14 @@
     <Content Include="Templates\.md.txt">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
+    <Resource Include="Templates\Pages\.createdialog.razor.txt" />
     <Content Include="Templates\Pages\.razor.txt">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pages\.formdialog.razor.txt">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pages\Components\.advancedsearchcomponent.razor.txt">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <Content Include="Templates\Persistence\Configurations\.configuration.cs.txt">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\Queries\Export\.cs.txt">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Queries\GetById\.cs.txt">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Queries\Pagination\.cs.txt">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Queries\GetAll\.cs.txt">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
     <Content Include="Templates\DTOs\.dto.cs.txt">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Commands\AddEdit\.cs.txt">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Commands\AddEdit\.validator.cs.txt">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Commands\Create\.cs.txt">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Commands\Create\.validator.cs.txt">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Commands\Delete\.cs.txt">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Commands\Delete\.validator.cs.txt">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Commands\Update\.cs.txt">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Commands\Update\.validator.cs.txt">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Commands\Import\.cs.txt">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Commands\Import\.validator.cs.txt">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <Content Include="Templates\EventHandlers\.created.cs.txt">
@@ -219,6 +169,7 @@
     <Content Include="Templates\.cs.txt">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
+    <Resource Include="Templates\Service\.service.cs.txt" />
     <Resource Include="Resources\icon.png" />
   </ItemGroup>
   <ItemGroup>
