@@ -110,7 +110,8 @@ namespace CleanArchitecture.CodeGenerator
 						$"{nameofPlural}/EventHandlers/{name}CreatedEventHandler.cs",
 						$"{nameofPlural}/EventHandlers/{name}UpdatedEventHandler.cs",
 						$"{nameofPlural}/EventHandlers/{name}DeletedEventHandler.cs",
-						$"{nameofPlural}/Service/{name}Service.cs"
+						$"{nameofPlural}/Service/{name}Service.cs",
+						$"{nameofPlural}/Validator/{name}Validator.cs"
 					};
 					foreach (var item in list)
 					{

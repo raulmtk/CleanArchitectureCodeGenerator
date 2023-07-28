@@ -42,6 +42,7 @@ namespace CleanArchitecture.CodeGenerator
 				"DTOs",				
 				"EventHandlers",
 				"Service",
+				"Validator",
 				"Events",				
 				"Pages",
 				"Persistence\\Configurations",
@@ -228,11 +229,11 @@ namespace CleanArchitecture.CodeGenerator
 			var output = new StringBuilder();
 			foreach(var property in classObject.Properties.Where(x => x.Type.IsKnownType))
 			{
-				output.Append($"    [Description(\"{property.Name}\")]\r\n");
-				if (property.Name == PRIMARYKEY)
+				output.Append($"	[Description(\"{property.Name}\")]\r\n");
+				if (property.Name == PRIMARYKEY || property.Name == "Code")
 				{
 					if (property.Type.CodeName == "string")
-						output.Append($"    public {property.Type.CodeName} {property.Name} {{get;set;}} = String.Empty; \r\n");
+						output.Append($"    public {property.Type.CodeName} {property.Name} {{get;set;}} = string.Empty; \r\n");
 					else
 						output.Append($"    public {property.Type.CodeName} {property.Name} {{get;set;}} \r\n");
 				}
@@ -240,15 +241,12 @@ namespace CleanArchitecture.CodeGenerator
 				{
 					switch (property.Type.CodeName)
 					{
-						case "string" when property.Name.Equals("Name", StringComparison.OrdinalIgnoreCase):
-							output.Append($"    public {property.Type.CodeName} {property.Name} {{get;set;}} = String.Empty; \r\n");
+						case "string":
+							output.Append($"    public {property.Type.CodeName} {property.Name} {{get;set;}} = string.Empty; \r\n");
 							break;
-						case "string" when !property.Name.Equals("Name", StringComparison.OrdinalIgnoreCase) && !property.Type.IsArray && !property.Type.IsDictionary:
+						case "string?":
 							output.Append($"    public {property.Type.CodeName}? {property.Name} {{get;set;}} \r\n");
-							break;
-						case "string" when !property.Name.Equals("Name", StringComparison.OrdinalIgnoreCase) && property.Type.IsArray:
-							output.Append($"    public HashSet<{property.Type.CodeName}>? {property.Name} {{get;set;}} \r\n");
-							break;
+							break;						
 						case "System.DateTime?":
 							output.Append($"    public DateTime? {property.Name} {{get;set;}} \r\n");
 							break;
@@ -344,9 +342,9 @@ namespace CleanArchitecture.CodeGenerator
 			//	output.Append("    </CellTemplate>\r\n");
 			//	output.Append($"</PropertyColumn>\r\n");
 			//}
-			foreach (var property in classObject.Properties)
+			foreach (var property in classObject.Properties.Where(x => x.Type.IsKnownType))
 			{
-				if (property.Name == PRIMARYKEY) continue;
+				if (property.Name == PRIMARYKEY || property.Name == "Code") continue;
 				output.Append("                ");
 				output.Append($"<PropertyColumn Property=\"x => x.{property.Name}\" Title=\"@L[_currentDto.GetMemberDescription(x=>x.{property.Name})]\" />\r\n");
 			}

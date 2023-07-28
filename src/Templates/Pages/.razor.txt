@@ -2,10 +2,11 @@
 
 @using BlazorDownloadFile
 @using EvermoonSuite.Application.Features.{nameofPlural}.DTOs
+@using EvermoonSuite.Application.Features.{nameofPlural}.Service;
 
 @inject IJSRuntime JS
 @inject IStringLocalizer<{nameofPlural}> L
-@inject I{itemName}Service _service
+@inject I{itemname}Service _service
 @attribute [Authorize(Policy = Permissions.{nameofPlural}.View)]
 <PageTitle>@Title</PageTitle>
 
@@ -183,7 +184,7 @@
                 <MudCardContent>
                     @if (_toggleAdvancedFilter)
                     {
-                        <AdvancedFilters TEntity="Vendor" OnSearch="@(OnSearch)"/>
+                        <AdvancedFilters TEntity="{itemname}" OnSearch="@(OnSearch)"/>
                     }         
                     <MudDataGrid ServerData="@(ServerReload)"
                               FixedHeader="true"
@@ -308,7 +309,7 @@
         await _table.ReloadServerData();
     }
 
-    private async Task OnDetail(VendorDto dto)
+    private async Task OnDetail({itemname}Dto dto)
     {
         Snackbar.Add("Function not implemented", MudBlazor.Severity.Error);
     }
@@ -317,7 +318,7 @@
     {
         var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Medium, FullWidth = true };
         var dialog = DialogService.Show<_{itemname}CreateDialog>
-        (L["New {itemname}"], parameters, options);
+        (L["New {itemname}"], options);
         var state = await dialog.Result;
         if (!state.Canceled)
         {

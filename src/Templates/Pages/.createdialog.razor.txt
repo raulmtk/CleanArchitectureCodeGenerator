@@ -1,6 +1,10 @@
-﻿
+﻿@using EvermoonSuite.Application.Features.{nameofPlural}.DTOs
+@using EvermoonSuite.Application.Features.{nameofPlural}.Service;
+@using EvermoonSuite.Application.Features.{nameofPlural}.Validator;
+
 @inherits MudComponentBase
 @inject IStringLocalizer<{nameofPlural}> L
+@inject I{itemname}Service _service
 
 <MudDialog>
     <DialogContent>
@@ -24,9 +28,9 @@
     private bool _savingnew = false;
     [CascadingParameter]
     MudDialogInstance MudDialog { get; set; } = default!;
-    AddEdit{itemname}CommandValidator _modelValidator = new ();
-    [EditorRequired] [Parameter] public AddEdit{itemname}Command model { get; set; } = null!;
-    [Inject] private IMediator _mediator { get; set; } = default!;
+    {itemname}Validator _modelValidator = new ();
+    {itemname}Dto model = default!;
+    
     async Task Submit()
     {
         try
@@ -35,7 +39,7 @@
             await _form!.Validate().ConfigureAwait(false);
             if (!_form!.IsValid)
                 return;
-            var result = await _mediator.Send(model);
+            var result = await _service.Create(model);
             if (result.Succeeded)
             {
                 MudDialog.Close(DialogResult.Ok(true));
@@ -59,12 +63,12 @@
             await _form!.Validate().ConfigureAwait(false);
             if (!_form!.IsValid)
                return;
-            var result = await _mediator.Send(model);
+            var result = await _service.Create(model);
             if (result.Succeeded)
             {
                 Snackbar.Add(ConstantString.SaveSuccess, MudBlazor.Severity.Info);
                 await Task.Delay(300);
-                model = new AddEdit{itemname}Command() { };
+                model = new {itemname}Dto() { };
             }
             else
             {
