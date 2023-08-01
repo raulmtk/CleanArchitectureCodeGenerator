@@ -209,6 +209,27 @@
                             </PropertyColumn>
                             @*TODO: Define the fields that should be displayed in data table*@
                             {mudTdHeaderDefinition}
+                            <TemplateColumn Title="Actions">
+                                <CellTemplate>
+                                    <MudStack Row="true" Spacing="1">
+                                        <MudIconButton Icon="@Icons.Material.Filled.CopyAll"
+                                                       Size="Size.Small"
+                                                       Title="Clone"
+                                                       Color="Color.Primary"
+                                                       OnClick="@(() => OnClone(context.Item))" />
+                                        <MudIconButton Icon="@Icons.Material.Filled.Edit"
+                                                       Size="Size.Small"
+                                                       Title="Edit"
+                                                       Color="Color.Warning"
+                                                       OnClick="@(() => OnEdit(context.Item))" />
+                                        <MudIconButton Icon="@Icons.Material.Filled.DeleteForever"
+                                                       Size="Size.Small"
+                                                       Title="Delete"
+                                                       Color="Color.Error"
+                                                       OnClick="@(() => OnDelete(context.Item))" />
+                                    </MudStack>
+                                </CellTemplate>
+                            </TemplateColumn>
                         </Columns>
                         <NoRecordsContent>
                             <MudText>@ConstantString.NoRecords</MudText>
@@ -316,9 +337,14 @@
 
     private async Task OnCreate()
     {
+        var obj = new {itemname}Dto();
+        var parameters = new DialogParameters()
+        {
+            { nameof(_{itemname}CreateDialog.model), obj },
+        };
         var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Medium, FullWidth = true };
         var dialog = DialogService.Show<_{itemname}CreateDialog>
-        (L["New {itemname}"], options);
+        (L["New {itemname}"], parameters, options);
         var state = await dialog.Result;
         if (!state.Canceled)
         {
@@ -326,9 +352,57 @@
         }
     }
 
-    private async Task OnClone()
+    private async Task OnClone({itemname}Dto obj)
     {
-        Snackbar.Add("Function not implemented", MudBlazor.Severity.Error);
+        var copy = new {itemname}Dto()
+        {
+           /*define all clonable field*/
+        };
+        var parameters = new DialogParameters()
+        {
+            { nameof(_{itemname}CreateDialog.model), copy },
+        };
+        var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Medium, FullWidth = true };
+        var dialog = DialogService.Show<_{itemname}CreateDialog>
+        (L["New {itemname}"], parameters, options);
+        var state = await dialog.Result;
+        if (!state.Canceled)
+        {
+            await _table.ReloadServerData();
+        }
+    }
+
+    private async Task OnEdit({itemname}Dto obj)
+    {
+        var parameters = new DialogParameters()
+        {
+            { nameof(_{itemname}EditDialog.model), obj },
+        };
+        var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Medium, FullWidth = true };
+        var dialog = DialogService.Show<_{itemname}EditDialog>
+        (L[$"Edit Item"], parameters, options);
+        var state = await dialog.Result;
+        if (!state.Canceled)
+        {
+            await _table.ReloadServerData();
+        }
+    }
+
+    private async Task OnDelete({itemname}Dto obj)
+    {
+        var parameters = new DialogParameters
+           {
+             { nameof(DeleteConfirmation.ContentText), string.Format(ConstantString.DeleteConfirmation) }
+           };
+        var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Small, FullWidth = true, DisableBackdropClick = true };
+        var dialog = DialogService.Show<DeleteConfirmation>(ConstantString.DeleteConfirmationTitle, parameters, options);
+        var state = await dialog.Result;
+        if (!state.Canceled)
+        {
+            await _service.ChangeActiveStatus(obj, false);
+            await _table.ReloadServerData();
+        }
+
     }
 
     private async Task OnExport()
