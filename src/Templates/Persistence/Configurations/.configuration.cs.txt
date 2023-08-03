@@ -9,7 +9,7 @@ public class {itemname}Configuration : IEntityTypeConfiguration<{itemname}>
 {
     public void Configure(EntityTypeBuilder<{itemname}> builder)
     {
-        builder.ToTable("{itemname}");
+        builder.ToTable("_{nameofPlural}");
         builder.HasKey(k => k.{keyname});
         builder.Property(t => t.Name).HasMaxLength(250).IsRequired();
         /*Define all Db configurations*/

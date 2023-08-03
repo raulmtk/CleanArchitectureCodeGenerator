@@ -129,12 +129,13 @@
     <Content Include="Templates\.md.txt">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-	  <Content Include="Templates\Validator\.validator.cs.txt">
-		  <IncludeInVSIX>true</IncludeInVSIX>
-	  </Content>
-	  <Content Include="Templates\Pages\.createdialog.razor.txt">
-		  <IncludeInVSIX>true</IncludeInVSIX>
-	  </Content>
+    <Resource Include="Templates\Pages\.editdialog.razor.txt" />
+    <Content Include="Templates\Validator\.validator.cs.txt">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Pages\.createdialog.razor.txt">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
     <Content Include="Templates\Pages\.razor.txt">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
@@ -174,10 +175,9 @@
     <Content Include="Templates\.cs.txt">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-	  <Content Include="Templates\Service\.service.cs.txt">
-		  <IncludeInVSIX>true</IncludeInVSIX>
-	  </Content>
-	  
+    <Content Include="Templates\Service\.service.cs.txt">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
     <Resource Include="Resources\icon.png" />
   </ItemGroup>
   <ItemGroup>

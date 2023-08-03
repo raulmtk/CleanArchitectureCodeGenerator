@@ -16,15 +16,14 @@
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel">@ConstantString.Cancel</MudButton>
-        <MudLoadingButton Loading="@_savingnew" OnClick="SaveAndNew">@ConstantString.SaveAndNew</MudLoadingButton>
-        <MudButton Loading="@_saving" Color="MudBlazor.Color.Primary" OnClick="Submit">@ConstantString.Save</MudButton>
+        <MudLoadingButton Loading="@_saving" Color="MudBlazor.Color.Primary" OnClick="Submit">@ConstantString.Save</MudButton>
     </DialogActions>
 </MudDialog>
 
 @code {
     MudForm? _form;
     private bool _saving = false;
-    private bool _savingnew = false;
+    
     [CascadingParameter]
     MudDialogInstance MudDialog { get; set; } = default!;
     {itemname}Validator _modelValidator = new ();
@@ -55,30 +54,6 @@
             _saving = false;
         }
     }
-    async Task SaveAndNew()
-    {
-        try
-        {
-            _savingnew = true;
-            await _form!.Validate().ConfigureAwait(false);
-            if (!_form!.IsValid)
-               return;
-            var result = await _service.Create(model);
-            if (result.Succeeded)
-            {
-                Snackbar.Add(ConstantString.SaveSuccess, MudBlazor.Severity.Info);
-                await Task.Delay(300);
-                model = new {itemname}Dto() { };
-            }
-            else
-            {
-                Snackbar.Add(result.ErrorMessage, MudBlazor.Severity.Error);
-            }
-        }
-        finally
-        {
-            _savingnew = false;
-        }
-    }
+    
     void Cancel() => MudDialog.Cancel();
 }

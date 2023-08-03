@@ -9,6 +9,8 @@ public interface I{itemname}Service
     Task<Result<{keytype}>> Create({itemname}Dto dto, CancellationToken cancellationToken = default);
     Task<Result<bool>> Update({itemname}Dto dto, CancellationToken cancellationToken = default);
     Task<Result<bool>> ChangeActiveStatus({itemname}Dto dto, bool active, CancellationToken cancellationToken = default);
+    Task<Result<string>> ImportFromExcel(byte[] data, CancellationToken cancellationToken = default);
+    Task ImportAsync(IEnumerable<WarehouseDto> data, CancellationToken cancellationToken = default);
 }
 
 public class {itemname}Service : I{itemname}Service
@@ -86,7 +88,10 @@ public class {itemname}Service : I{itemname}Service
         {
             var item = await _context.{nameofPlural}.FindAsync( new object[] { dto.{keyname} }, cancellationToken) ?? throw new NotFoundException($"{itemname} with {keyname}: [{dto.{keyname}}] not found.");
             item.IsActive = active;
-            item.AddDomainEvent(new {itemname}UpdatedEvent(item));
+            if (active)
+                item.AddDomainEvent(new {itemname}UpdatedEvent(item));
+            else
+                item.AddDomainEvent(new {itemname}DeletedEvent(item));
             await _context.SaveChangesAsync(cancellationToken);
             return await Result<bool>.SuccessAsync(active);
         }
@@ -97,5 +102,44 @@ public class {itemname}Service : I{itemname}Service
         }
     }
 
-    
+    public async Task<Result<string>> ImportFromExcel(byte[] data, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var _dto = new {itemname}Dto();
+            var result = await _excelService.ImportFromExcelTableAsync(data, mappers: new Dictionary<string, Func<DataRow, {itemname}Dto, object?>>
+            {
+               {importFuncExpression}
+            }, _localizer[_dto.GetClassDescription()]);
+            if (result.Succeeded && result.Data is not null)
+            {
+                BackgroundJob.Enqueue(() => ImportAsync(result.Data, cancellationToken));
+                return await Result<string>.SuccessAsync(string.Empty);
+            }
+            else
+            {
+                return await Result<string>.FailureAsync(result.Errors);
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex.Message, ex);
+            throw;
+        }
+    }
+
+    public async Task ImportAsync(IEnumerable<{itemname}Dto> data, CancellationToken cancellationToken)
+    {
+        foreach (var dto in data)
+        {
+            var exists = await _context.{nameofPlural}.AnyAsync(x => x.{keyname} == dto.{keyname}, cancellationToken);
+            if (!exists)
+            {
+                var item = _mapper.Map<{itemname}>(dto);
+                item.AddDomainEvent(new {itemname}CreatedEvent(item));
+                await _context.{nameofPlural}.AddAsync(item, cancellationToken);
+            }
+        }
+        await _context.SaveChangesAsync(cancellationToken);
+    }
 }

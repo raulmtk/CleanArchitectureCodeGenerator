@@ -54,18 +54,7 @@
                                                        Title="@L[ConstantString.New]"
                                                        aria-label="new">
                                         </MudIconButton>
-                                    </MudTooltip>
-                                    <MudTooltip Text="@L[ConstantString.Clone]" Color="Color.Default" Placement="Placement.Bottom" Arrow="true">
-                                        <MudIconButton DisableElevation Variant="Variant.Text"
-                                                       Size="Size.Medium"
-                                                       Disabled="@(_selectedItems.Count!=1)"
-                                                       OnClick="@(OnClone)"
-                                                       Icon="@Icons.Material.Filled.CopyAll"
-                                                       Color="@Color.Primary"
-                                                       Title="@L[ConstantString.Clone]"
-                                                       aria-label="clone">
-                                        </MudIconButton>
-                                    </MudTooltip>
+                                    </MudTooltip>                                   
                                 }                                
                                 @if (_canExport)
                                 {
@@ -87,7 +76,6 @@
                                                                Size="Size.Medium"
                                                                Variant="Variant.Text"
                                                                Color="Color.Primary"
-                                                               Disabled="@_loading"
                                                                Icon="@(_uploading ? "fa-solid fa-spinner fa-spin" : Icons.Material.Filled.Upload)"
                                                                for="@context">
                                                 </MudIconButton>
@@ -106,69 +94,21 @@
                                 </MudTooltip>
                             </MudHidden>
                             <MudHidden Breakpoint="Breakpoint.SmAndDown" Invert="true">
-                                <MudTooltip Text="@L[ConstantString.Refresh]" Color="Color.Default" Placement="Placement.Bottom" Arrow="true">
-                                    <MudIconButton DisableElevation Variant="Variant.Text"
-                                                   Size="Size.Medium"
-                                                   Icon="@Icons.Material.Filled.Refresh"
-                                                   OnClick="@(OnRefresh)"
-                                                   Color="@Color.Primary"
-                                                   Title="@L[ConstantString.Refresh]"
-                                                   aria-label="refresh">
-                                    </MudIconButton>
-                                </MudTooltip>
-                                <MudTooltip Text="@L[ConstantString.ToggleAdvancedFilters]" Color="Color.Default" Placement="Placement.Bottom" Arrow="true">
-                                    <MudIconButton DisableElevation Variant="Variant.Text"
-                                                   Size="Size.Medium"
-                                                   OnClick="@(OnToggledAdvancedFilters)"
-                                                   Icon="@(_toggleAdvancedFilter ? Icons.Material.Filled.FilterAltOff : Icons.Material.Filled.FilterAlt)"
-                                                   Color="@Color.Primary"
-                                                   aria-label="filters">
-                                    </MudIconButton>
-                                </MudTooltip>
-                                @if (_canImport)
-                                {
-                                    <MudTooltip Text="@L[ConstantString.ImportExcel]" Color="Color.Default" Placement="Placement.Bottom" Arrow="true">
-                                        <MudFileUpload T="IBrowserFile" FilesChanged="OnImportData" Accept=".xlsx" Style="margin-top:0px">
-                                            <ButtonTemplate>
-                                                <MudIconButton HtmlTag="label"
-                                                               Size="Size.Medium"
-                                                               Variant="Variant.Text"
-                                                               Color="Color.Primary"
-                                                               Disabled="@_loading"
-                                                               Icon="@(_uploading ? "fa-solid fa-spinner fa-spin" : Icons.Material.Filled.Upload)"
-                                                               for="@context">
-                                                </MudIconButton>
-                                            </ButtonTemplate>
-                                        </MudFileUpload>
-                                    </MudTooltip>
-                                }
-                                @if (_canExport)
-                                {
-                                    <MudTooltip Text="@L[ConstantString.Export]" Color="Color.Default" Placement="Placement.Bottom" Arrow="true">
-                                        <MudMenu Dense="true" Icon="@Icons.Material.Filled.Download" Color="Color.Primary" Disabled="@_downloading"
-                                                 AnchorOrigin="@Origin.BottomRight" TransformOrigin="@Origin.TopRight">
-                                            <MudMenuItem IconSize="Size.Small" IconColor="Color.Primary" Icon="fa-solid fa-file-pdf">@L[ConstantString.ExportPDF]</MudMenuItem>
-                                            <MudMenuItem IconSize="Size.Small" IconColor="Color.Primary" Icon="fa-solid fa-file-csv">Export to CSV</MudMenuItem>
-                                            <MudMenuItem IconSize="Size.Small" IconColor="Color.Primary" Icon="fa-solid fa-file-excel">Export to Excel</MudMenuItem>
-                                        </MudMenu>
-                                    </MudTooltip>
-                                }
                                 <MudTooltip Text="@L[ConstantString.Menu]" Color="Color.Default" Placement="Placement.Bottom" Arrow="true">
                                     <MudMenu Dense="true" Icon="@Icons.Material.Filled.Dehaze" Color="Color.Primary" Disabled="@_downloading"
                                              AnchorOrigin="@Origin.BottomRight" TransformOrigin="@Origin.TopRight">
+                                             <MudMenuItem IconSize="Size.Small" IconColor="Color.Primary"
+                                                     Icon="@Icons.Material.Filled.Refresh"
+                                                     OnClick="@(OnRefresh)">
+                                            @L[ConstantString.Refresh]
+                                        </MudMenuItem>
                                         @if (_canCreate)
                                         {
                                             <MudMenuItem IconSize="Size.Small" IconColor="Color.Primary"
                                                          Icon="@Icons.Material.Filled.Add"
                                                          OnClick="@(OnCreate)">
                                                 @L[ConstantString.New]
-                                            </MudMenuItem>
-                                            <MudMenuItem IconSize="Size.Small" IconColor="Color.Primary"
-                                                         Icon="@Icons.Material.Filled.CopyAll"
-                                                         OnClick="@(OnClone)"
-                                                         Disabled="@(_selectedItems.Count!=1)">
-                                                @L[ConstantString.Clone]
-                                            </MudMenuItem>
+                                            </MudMenuItem>                                           
                                         }                                        
 
                                         <MudMenuItem>
@@ -212,21 +152,35 @@
                             <TemplateColumn Title="Actions">
                                 <CellTemplate>
                                     <MudStack Row="true" Spacing="1">
-                                        <MudIconButton Icon="@Icons.Material.Filled.CopyAll"
+                                        <MudIconButton Icon="@Icons.Material.Outlined.RemoveRedEye"
                                                        Size="Size.Small"
-                                                       Title="Clone"
+                                                       Title="Details"
                                                        Color="Color.Primary"
-                                                       OnClick="@(() => OnClone(context.Item))" />
-                                        <MudIconButton Icon="@Icons.Material.Filled.Edit"
-                                                       Size="Size.Small"
-                                                       Title="Edit"
-                                                       Color="Color.Warning"
-                                                       OnClick="@(() => OnEdit(context.Item))" />
-                                        <MudIconButton Icon="@Icons.Material.Filled.DeleteForever"
-                                                       Size="Size.Small"
-                                                       Title="Delete"
-                                                       Color="Color.Error"
-                                                       OnClick="@(() => OnDelete(context.Item))" />
+                                                       OnClick="@(() => OnDetail(context.Item))" />
+                                        @if (_canCreate)
+                                        {
+                                            <MudIconButton Icon="@Icons.Material.Filled.CopyAll"
+                                                           Size="Size.Small"
+                                                           Title="Clone"
+                                                           Color="Color.Primary"
+                                                           OnClick="@(() => OnClone(context.Item))" />
+                                        }
+                                        @if (_canEdit)
+                                        {
+                                            <MudIconButton Icon="@Icons.Material.Filled.Edit"
+                                                           Size="Size.Small"
+                                                           Title="Edit"
+                                                           Color="Color.Warning"
+                                                           OnClick="@(() => OnEdit(context.Item))" />
+                                        }
+                                        @if (_canDelete)
+                                        {
+                                            <MudIconButton Icon="@Icons.Material.Filled.DeleteForever"
+                                                           Size="Size.Small"
+                                                           Title="Delete"
+                                                           Color="Color.Error"
+                                                           OnClick="@(() => OnDelete(context.Item))" />
+                                        }
                                     </MudStack>
                                 </CellTemplate>
                             </TemplateColumn>
@@ -344,7 +298,7 @@
         };
         var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Medium, FullWidth = true };
         var dialog = DialogService.Show<_{itemname}CreateDialog>
-        (L["New {itemname}"], parameters, options);
+        (L[$"New {L[obj.GetClassDescription()]}"], parameters, options);
         var state = await dialog.Result;
         if (!state.Canceled)
         {
@@ -364,7 +318,7 @@
         };
         var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Medium, FullWidth = true };
         var dialog = DialogService.Show<_{itemname}CreateDialog>
-        (L["New {itemname}"], parameters, options);
+        (L[$"New {L[obj.GetClassDescription()]}"], parameters, options);
         var state = await dialog.Result;
         if (!state.Canceled)
         {
@@ -380,7 +334,7 @@
         };
         var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Medium, FullWidth = true };
         var dialog = DialogService.Show<_{itemname}EditDialog>
-        (L[$"Edit Item"], parameters, options);
+        (L[$"Edit {L[obj.GetClassDescription()]}"], parameters, options);
         var state = await dialog.Result;
         if (!state.Canceled)
         {
@@ -433,17 +387,16 @@
 
     private async Task OnImportData(IBrowserFile file)
     {
-        Snackbar.Add("Function not implemented", MudBlazor.Severity.Error);
-       /*
+        if (_uploading)
+            return;
+
         _uploading = true;
         var stream = new MemoryStream();
-        await file.OpenReadStream().CopyToAsync(stream);
-        var command = new Import{nameofPlural}Command(file.Name, stream.ToArray());
-        var result = await Mediator.Send(command);
+        await file.OpenReadStream((long)2147483648).CopyToAsync(stream);
+        var result = await _service.ImportFromExcel(stream.ToArray());
         if (result.Succeeded)
         {
-            await _table.ReloadServerData();
-            Snackbar.Add($"{ConstantString.ImportSuccess}", MudBlazor.Severity.Info);
+            Snackbar.Add($"{ConstantString.BackgroungJobCreated}", MudBlazor.Severity.Info);
         }
         else
         {
@@ -453,7 +406,6 @@
             }
         }
         _uploading = false;
-        */
     }
 
 }
