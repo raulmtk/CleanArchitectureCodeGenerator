@@ -94,8 +94,9 @@ public class {itemname}Service : I{itemname}Service
     public async Task<Result<{keytype}>> Create({itemname}Dto dto, CancellationToken cancellationToken)
     {
         try
-        {            
-            var item = _mapper.Map<{itemname}>(dto);
+        {   
+            var item = new {itemname}();
+            item = _mapper.Map<{itemname}>(dto);
             item.AddDomainEvent(new {itemname}CreatedEvent(item));
             _context.{nameofPlural}.Add(item);
             await _context.SaveChangesAsync(cancellationToken);
@@ -178,7 +179,8 @@ public class {itemname}Service : I{itemname}Service
             var exists = await _context.{nameofPlural}.AnyAsync(x => x.{keyname} == dto.{keyname}, cancellationToken);
             if (!exists)
             {
-                var item = _mapper.Map<{itemname}>(dto);
+                var item = new {itemname}();
+                item = _mapper.Map<{itemname}>(dto);
                 item.AddDomainEvent(new {itemname}CreatedEvent(item));
                 await _context.{nameofPlural}.AddAsync(item, cancellationToken);
             }

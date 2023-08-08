@@ -305,7 +305,7 @@ namespace CleanArchitecture.CodeGenerator
 				}
 				else
 				{
-					output.Append($"{{ _localizer[_dto.GetMemberDescription(x=>x.{property.Name})], (row, item) => item.{property.Name} = row[_localizer[_dto.GetMemberDescription(x=>x.{property.Name})]].ToString() }}, \r\n");
+					output.Append($"{{ _localizer[_dto.GetMemberDescription(x=>x.{property.Name})], (row, item) => item.{property.Name} = row[_localizer[_dto.GetMemberDescription(x=>x.{property.Name})]].ToString()! }}, \r\n");
 				}
 			}
 			return output.ToString();

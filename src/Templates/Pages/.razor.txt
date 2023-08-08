@@ -84,7 +84,7 @@
                                         <MudIconButton Icon="@Icons.Material.Outlined.RemoveRedEye"
                                                        Size="Size.Small"
                                                        Title="Details"
-                                                       Color="Color.Primary"
+                                                       Color="Color.Surface"
                                                        OnClick="@(() => OnDetail(context.Item))" />
                                         @if (_canCreate && context.Item.IsActive)
                                         {
