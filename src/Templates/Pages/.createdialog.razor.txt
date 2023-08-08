@@ -12,13 +12,13 @@
             <MudGrid>
                 {mudFormFieldDefinition}
             </MudGrid>
+            <MudStack Row="true" Class="mt-5 mb-3" Spacing="2" Justify="Justify.FlexEnd">
+                <MudButton Size="Size.Small" Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Cancel" OnClick="Cancel">@ConstantString.Cancel</MudButton>
+                <MudLoadingButton Loading="@_savingnew" Size="Size.Small" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Save" Color="Color.Primary" OnClick="SaveAndNew">@ConstantString.SaveAndNew</MudLoadingButton>
+                <MudLoadingButton Loading="@_saving" Size="Size.Small" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Save" Color="Color.Primary" OnClick="Submit">@ConstantString.Save</MudLoadingButton>
+            </MudStack>
         </MudForm>
-    </DialogContent>
-    <DialogActions>
-        <MudButton OnClick="Cancel">@ConstantString.Cancel</MudButton>
-        <MudLoadingButton Loading="@_savingnew" OnClick="SaveAndNew">@ConstantString.SaveAndNew</MudLoadingButton>
-        <MudButton Loading="@_saving" Color="MudBlazor.Color.Primary" OnClick="Submit">@ConstantString.Save</MudButton>
-    </DialogActions>
+    </DialogContent>   
 </MudDialog>
 
 @code {

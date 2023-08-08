@@ -231,27 +231,34 @@ namespace CleanArchitecture.CodeGenerator
 			{
 				output.Append($"	[Description(\"{property.Name}\")]\r\n");
 				if (property.Name == PRIMARYKEY || property.Name == "Code")
+					output.Append($"	[Visible(Default = true, ReadOnly = true)]\r\n");
+				else
+				{
+					output.Append($"	[Visible(Default = true)]\r\n");
+					output.Append($"	[Clonable]\r\n");
+				}
+				if (property.Name == PRIMARYKEY || property.Name == "Code")
 				{
 					if (property.Type.CodeName == "string")
-						output.Append($"    public {property.Type.CodeName} {property.Name} {{get;set;}} = string.Empty; \r\n");
+						output.Append($"    public {property.Type.CodeName} {property.Name} {{get;set;}} = string.Empty; \r\n\n");
 					else
-						output.Append($"    public {property.Type.CodeName} {property.Name} {{get;set;}} \r\n");
+						output.Append($"    public {property.Type.CodeName} {property.Name} {{get;set;}} \r\n\n");
 				}
 				else
 				{
 					switch (property.Type.CodeName)
 					{
 						case "string":
-							output.Append($"    public {property.Type.CodeName} {property.Name} {{get;set;}} = string.Empty; \r\n");
+							output.Append($"    public {property.Type.CodeName} {property.Name} {{get;set;}} = string.Empty; \r\n\n");
 							break;
 						case "string?":
-							output.Append($"    public {property.Type.CodeName}? {property.Name} {{get;set;}} \r\n");
+							output.Append($"    public {property.Type.CodeName}? {property.Name} {{get;set;}} \r\n\n");
 							break;						
 						case "System.DateTime?":
-							output.Append($"    public DateTime? {property.Name} {{get;set;}} \r\n");
+							output.Append($"    public DateTime? {property.Name} {{get;set;}} \r\n\n");
 							break;
 						case "System.DateTime":
-							output.Append($"    public DateTime {property.Name} {{get;set;}} \r\n");
+							output.Append($"    public DateTime {property.Name} {{get;set;}} \r\n\n");
 							break;
 						case "decimal?":
 						case "decimal":
@@ -259,22 +266,22 @@ namespace CleanArchitecture.CodeGenerator
 						case "int":
 						case "double?":
 						case "double":
-							output.Append($"    public {property.Type.CodeName} {property.Name} {{get;set;}} \r\n");
+							output.Append($"    public {property.Type.CodeName} {property.Name} {{get;set;}} \r\n\n");
 							break;
 						default:
 							if (property.Type.CodeName.Any(x => x == '?'))
 							{
-								output.Append($"    public {property.Type.CodeName} {property.Name} {{get;set;}} \r\n");
+								output.Append($"    public {property.Type.CodeName} {property.Name} {{get;set;}} \r\n\n");
 							}
 							else
 							{
 								if (property.Type.IsOptional)
 								{
-									output.Append($"    public {property.Type.CodeName}? {property.Name} {{get;set;}} \r\n");
+									output.Append($"    public {property.Type.CodeName}? {property.Name} {{get;set;}} \r\n\n");
 								}
 								else
 								{
-									output.Append($"    public {property.Type.CodeName} {property.Name} {{get;set;}} \r\n");
+									output.Append($"    public {property.Type.CodeName} {property.Name} {{get;set;}} \r\n\n");
 								}
 							}
 							break;
@@ -282,6 +289,8 @@ namespace CleanArchitecture.CodeGenerator
 
 				}
 			}
+			output.Append($"	public bool IsActive {{ get; set; }}\r\n");
+
 			return output.ToString();
 		}
 		private static string createImportFuncExpression(IntellisenseObject classObject)

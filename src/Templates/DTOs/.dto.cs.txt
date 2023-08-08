@@ -2,6 +2,7 @@
 namespace {namespace};
 
 [Description("{nameofPlural}")]
+[Name("{itemname}")]
 public class {itemname}Dto
 {
     // TODO: define data transfer object (DTO) fields, for example:

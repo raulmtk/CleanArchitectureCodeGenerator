@@ -12,12 +12,15 @@
             <MudGrid>
                 {mudFormFieldDefinition}
             </MudGrid>
+            <MudStack Row="true" Spacing="2" Class="mt-5 mb-3" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Baseline">
+                <MudButton Size="Size.Small" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.DeleteOutline" Color="Color.Warning" OnClick="Inactive">@ConstantString.Inactive</MudButton>
+                <MudStack Row="true" Spacing="2" Justify="Justify.FlexEnd">
+                    <MudButton Size="Size.Small" Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Cancel" OnClick="Cancel">@ConstantString.Cancel</MudButton>
+                    <MudButton Size="Size.Small" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Save" Color="Color.Primary" OnClick="Submit">@ConstantString.Save</MudButton>
+                </MudStack>
+            </MudStack>
         </MudForm>
-    </DialogContent>
-    <DialogActions>
-        <MudButton OnClick="Cancel">@ConstantString.Cancel</MudButton>
-        <MudLoadingButton Loading="@_saving" Color="MudBlazor.Color.Primary" OnClick="Submit">@ConstantString.Save</MudButton>
-    </DialogActions>
+    </DialogContent>   
 </MudDialog>
 
 @code {
@@ -54,6 +57,27 @@
             _saving = false;
         }
     }
-    
+    private async Task Inactive()
+    {
+        try
+        {
+            _saving = true;
+
+            var result = await _service.ChangeActiveStatus(model, false);
+            if (result.Succeeded)
+            {
+                MudDialog.Close(DialogResult.Ok(true));
+                Snackbar.Add(ConstantString.SaveSuccess, MudBlazor.Severity.Info);
+            }
+            else
+            {
+                Snackbar.Add(result.ErrorMessage, MudBlazor.Severity.Error);
+            }
+        }
+        finally
+        {
+            _saving = false;
+        }
+    }
     void Cancel() => MudDialog.Cancel();
 }

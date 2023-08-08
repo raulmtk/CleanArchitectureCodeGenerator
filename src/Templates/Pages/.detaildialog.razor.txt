@@ -1,0 +1,21 @@
+@using EvermoonSuite.Application.Features.{nameofPlural}.DTOs;
+
+@inherits MudComponentBase
+@inject IStringLocalizer<{nameofPlural}> L
+
+<MudDialog>
+    <DialogContent>
+        
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">@ConstantString.Close</MudButton>        
+    </DialogActions>
+</MudDialog>
+@code {
+    [CascadingParameter]
+    MudDialogInstance MudDialog { get; set; } = default!;
+    [Parameter]
+    public {itemname}Dto model { get; set; } = default!;
+
+    void Cancel() => MudDialog.Cancel();
+}

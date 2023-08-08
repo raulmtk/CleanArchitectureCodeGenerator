@@ -6,11 +6,13 @@ namespace {namespace};
 public interface I{itemname}Service
 {
 	Task<PaginatedData<{itemname}Dto>> Get{nameofPlural}WithPagination(EntityDataQuery<{itemname}> query);
+    Task<IEnumerable<{itemname}Dto>> Get{nameofPlural}WithoutPagination(EntityDataQuery<{itemname}> query, CancellationToken cancellationToken = default);
     Task<Result<{keytype}>> Create({itemname}Dto dto, CancellationToken cancellationToken = default);
     Task<Result<bool>> Update({itemname}Dto dto, CancellationToken cancellationToken = default);
     Task<Result<bool>> ChangeActiveStatus({itemname}Dto dto, bool active, CancellationToken cancellationToken = default);
     Task<Result<string>> ImportFromExcel(byte[] data, CancellationToken cancellationToken = default);
-    Task ImportAsync(IEnumerable<WarehouseDto> data, CancellationToken cancellationToken = default);
+    Task ImportAsync(IEnumerable<{itemname}Dto> data, CancellationToken cancellationToken = default);
+    Task<Result<byte[]>> ExportAsync(EntityDataQuery<{itemname}> query, CancellationToken cancellationToken = default);
 }
 
 public class {itemname}Service : I{itemname}Service
@@ -18,27 +20,68 @@ public class {itemname}Service : I{itemname}Service
 	public readonly IApplicationDbContext _context;
     public readonly IMapper _mapper;
     public readonly ILogger<{itemname}Service> _logger;
+    public readonly IExcelService _excelService;
+    public readonly IStringLocalizer<{itemname}> _localizer;
+    public readonly {itemname}Dto _dto = new();
 
-    public {itemname}Service(IApplicationDbContext context, IMapper mapper, ILogger<{itemname}Service> logger)
+    public {itemname}Service(IApplicationDbContext context, IMapper mapper, ILogger<{itemname}Service> logger,
+        IExcelService excelService, IStringLocalizer<{itemname}> localizer)
     {
         _context = context;
         _mapper = mapper;
         _logger = logger;
+        _excelService = excelService;
+        _localizer = localizer;
+    }
+
+    private IQueryable<{itemname}> DataQuery(EntityDataQuery<{itemname}> query)
+    {
+        IQueryable<{itemname}> data = _context.{nameofPlural};
+        var queryElementTypeParam = Expression.Parameter(typeof({itemname}));
+        var memberAccess = Expression.PropertyOrField(queryElementTypeParam, (query.SortProperty == "DisplayAddress" ? "Address" : query.SortProperty));
+        var keySelector = Expression.Lambda(memberAccess, queryElementTypeParam);
+        var orderBy = Expression.Call(
+            typeof(Queryable),
+            query.SortOrder == Sorting.Ascending ? "OrderBy" : "OrderByDescending",
+            new Type[] { typeof({itemname}), memberAccess.Type },
+            data.Expression,
+            Expression.Quote(keySelector));
+        data = data.Provider.CreateQuery<{itemname}>(orderBy);
+
+        if (!query.ShowInactives)
+            data = data.Where(x => x.IsActive);
+
+        if (query.Filters != null)
+            data = data.Where(query.Filters);
+
+        return data;
     }
 
     public async Task<PaginatedData<{itemname}Dto>> Get{nameofPlural}WithPagination(EntityDataQuery<{itemname}> query)
     {
         try
         {
-            IQueryable<{itemname}> data = from item in _context.{nameofPlural} orderby item.{keyname} select item;
-            if (!query.ShowInactives)
-                data = data.Where(x => x.IsActive);
-
-            if (query.Filters != null)
-                data = data.Where(query.Filters);
+            IQueryable<{itemname}> data = DataQuery(query);
 
             var result = await data.AsNoTracking().ProjectTo<{itemname}Dto>(_mapper.ConfigurationProvider).PaginatedDataAsync(query.PageNumber, query.PageSize);
             
+            return result;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex.Message, ex);
+            throw;
+        }
+    }
+
+    public async Task<IEnumerable<{itemname}Dto>> Get{nameofPlural}WithoutPagination(EntityDataQuery<{itemname}> query, CancellationToken cancellationToken)
+    {
+        try
+        {
+            IQueryable<{itemname}> data = DataQuery(query);
+
+            var result = await data.AsNoTracking().ProjectTo<{itemname}Dto>(_mapper.ConfigurationProvider).ToListAsync(cancellationToken);
+
             return result;
         }
         catch (Exception ex)
@@ -141,5 +184,24 @@ public class {itemname}Service : I{itemname}Service
             }
         }
         await _context.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task<Result<byte[]>> ExportAsync(EntityDataQuery<{itemname}> query, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var data = await Get{nameofPlural}WithoutPagination(query, cancellationToken);
+            var result = await _excelService.ExportAsync(data,
+                new Dictionary<string, Func<{itemname}Dto, object?>>()
+                {
+                   {exportFuncExpression} 
+            }, _localizer[_dto.GetClassDescription()]);
+            return await Result<byte[]>.SuccessAsync(result); ;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex.Message, ex);
+            throw;
+        }
     }
 }

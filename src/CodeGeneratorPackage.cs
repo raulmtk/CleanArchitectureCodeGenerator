@@ -123,6 +123,7 @@ namespace CleanArchitecture.CodeGenerator
 						$"Pages/{nameofPlural}/{nameofPlural}.razor",
 						$"Pages/{nameofPlural}/_{name}CreateDialog.razor",
 						$"Pages/{nameofPlural}/_{name}EditDialog.razor",
+						$"Pages/{nameofPlural}/_{name}DetailDialog.razor",
 					};
 					foreach (var item in pages)
 					{
