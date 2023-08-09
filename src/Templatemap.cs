@@ -129,6 +129,7 @@ namespace CleanArchitecture.CodeGenerator
 				var content = await reader.ReadToEndAsync();
 				var nameofPlural = ProjectHelpers.Pluralize(name);
 				var nameofPluralLower = ProjectHelpers.Pluralize(name).ToLowerInvariant();
+				var pluralCameSplit = splitCamelCase(nameofPlural);
 				var dtoFieldDefinition = createDtoFieldDefinition(classObject);
 				var primaryKeyType = GetPrimaryKeyType(classObject);
 				var keyName = GetKeyName(classObject);
@@ -158,7 +159,8 @@ namespace CleanArchitecture.CodeGenerator
 								.Replace("{fieldstring}", fieldString)
 								.Replace("{keyname}", keyName)
 								.Replace("{keynotemptycondition}", keynotemptycondition)
-								.Replace("{nameofPluralLowerCase}", nameofPluralLower);
+								.Replace("{nameofPluralLowerCase}", nameofPluralLower)
+								.Replace("{pluralCameSplit}", pluralCameSplit);
 			}
 		}
 
@@ -413,13 +415,12 @@ namespace CleanArchitecture.CodeGenerator
 			var output = new StringBuilder();
 			foreach (var property in classObject.Properties.Where(x => x.Type.IsKnownType == true))
 			{
-				if (property.Name == PRIMARYKEY) continue;
 				switch (property.Type.CodeName.ToLower())
 				{
 					case "string" when property.Name.Equals("Name", StringComparison.OrdinalIgnoreCase):
 						output.Append($"<MudItem xs=\"12\" md=\"6\"> \r\n");
 						output.Append("                ");
-						output.Append($"        <MudTextField Label=\"@L[model.GetMemberDescription(x=>x.{property.Name})]\" @bind-Value=\"model.{property.Name}\" For=\"@(() => model.{property.Name})\" Required=\"true\" RequiredError=\"@L[\"{splitCamelCase(property.Name).ToLower()} is required!\"]\"></MudTextField>\r\n");
+						output.Append($"        <MudTextField Label=\"@L[model.GetMemberDescription(x=>x.{property.Name})]\" @bind-Value=\"model.{property.Name}\" For=\"@(() => model.{property.Name})\" Required=\"true\"></MudTextField>\r\n");
 						output.Append("                ");
 						output.Append($"</MudItem> \r\n");
 						break;

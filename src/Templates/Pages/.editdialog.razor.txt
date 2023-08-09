@@ -12,7 +12,7 @@
             <MudGrid>
                 {mudFormFieldDefinition}
             </MudGrid>
-            <MudStack Row="true" Spacing="2" Class="mt-5 mb-3" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Baseline">
+            <MudStack Row="true" Spacing="2" Class="mt-6 mb-3" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Baseline">
                 <MudButton Size="Size.Small" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.DeleteOutline" Color="Color.Warning" OnClick="Inactive">@ConstantString.Inactive</MudButton>
                 <MudStack Row="true" Spacing="2" Justify="Justify.FlexEnd">
                     <MudButton Size="Size.Small" Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Cancel" OnClick="Cancel">@ConstantString.Cancel</MudButton>
