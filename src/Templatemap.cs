@@ -232,19 +232,23 @@ namespace CleanArchitecture.CodeGenerator
 			foreach(var property in classObject.Properties.Where(x => x.Type.IsKnownType))
 			{
 				output.Append($"	[Description(\"{property.Name}\")]\r\n");
-				if (property.Name == PRIMARYKEY || property.Name == "Code")
-					output.Append($"	[Visible(Default = true, ReadOnly = true)]\r\n");
-				else
-				{
-					output.Append($"	[Visible(Default = true)]\r\n");
-					output.Append($"	[Clonable]\r\n");
-				}
-				if (property.Name == PRIMARYKEY || property.Name == "Code")
+				//if (property.Name == PRIMARYKEY || property.Name == "Code")
+				//	output.Append($"	[Visible(Default = true, ReadOnly = true)]\r\n");
+				//else
+				//{
+				//	output.Append($"	[Visible(Default = true)]\r\n");
+				//	output.Append($"	[Clonable]\r\n");
+				//}
+				if (property.Name == "Code")
 				{
 					if (property.Type.CodeName == "string")
 						output.Append($"    public {property.Type.CodeName} {property.Name} {{get;set;}} = string.Empty; \r\n\n");
 					else
 						output.Append($"    public {property.Type.CodeName} {property.Name} {{get;set;}} \r\n\n");
+				}
+				else if (property.Name == PRIMARYKEY)
+				{
+					output.Append($"    public Guid {property.Name} {{get;set;}} \r\n\n");
 				}
 				else
 				{
@@ -291,7 +295,7 @@ namespace CleanArchitecture.CodeGenerator
 
 				}
 			}
-			output.Append($"	public bool IsActive {{ get; set; }}\r\n");
+			//output.Append($"	public bool IsActive {{ get; set; }}\r\n");
 
 			return output.ToString();
 		}

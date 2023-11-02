@@ -106,29 +106,27 @@ namespace CleanArchitecture.CodeGenerator
 					var list = new List<string>()
 					{
 						
-						$"{nameofPlural}/DTOs/{name}Dto.cs",
-						$"{nameofPlural}/EventHandlers/{name}CreatedEventHandler.cs",
-						$"{nameofPlural}/EventHandlers/{name}UpdatedEventHandler.cs",
-						$"{nameofPlural}/EventHandlers/{name}DeletedEventHandler.cs",
-						$"{nameofPlural}/Service/{name}Service.cs",
-						$"{nameofPlural}/Validator/{name}Validator.cs"
+						$"DTOs/{name}Dto.cs",
+						$"EventHandlers/{name}CreatedEventHandler.cs",
+						$"EventHandlers/{name}UpdatedEventHandler.cs",
+						$"EventHandlers/{name}DeletedEventHandler.cs",						
 					};
 					foreach (var item in list)
 					{
 						AddItemAsync(objectClass,item, name, target).Forget();
 					}
 
-					var pages = new List<string>()
-					{
-						$"Pages/{nameofPlural}/{nameofPlural}.razor",
-						$"Pages/{nameofPlural}/_{name}CreateDialog.razor",
-						$"Pages/{nameofPlural}/_{name}EditDialog.razor",
-						$"Pages/{nameofPlural}/_{name}DetailDialog.razor",
-					};
-					foreach (var item in pages)
-					{
-						AddItemAsync(objectClass,item, name, ui).Forget();
-					}
+					//var pages = new List<string>()
+					//{
+					//	$"Pages/{nameofPlural}/{nameofPlural}.razor",
+					//	$"Pages/{nameofPlural}/_{name}CreateDialog.razor",
+					//	$"Pages/{nameofPlural}/_{name}EditDialog.razor",
+					//	$"Pages/{nameofPlural}/_{name}DetailDialog.razor",
+					//};
+					//foreach (var item in pages)
+					//{
+					//	AddItemAsync(objectClass,item, name, ui).Forget();
+					//}
 
 				}
 				catch (Exception ex) when (!ErrorHandler.IsCriticalException(ex))
